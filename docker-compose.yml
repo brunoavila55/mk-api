@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  # O seu Proxy Reverso (Nginx)
+  nginx-proxy:
+    image: nginx:alpine
+    container_name: nginx-proxy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - apis-network
+    depends_on:
+      - mk-api-consulta-doc
+
+  # API 1: Consulta de Documento (A que criamos)
+  mk-api-consulta-doc:
+    build: .
+    container_name: mk-api-consulta-doc
+    restart: unless-stopped
+    # Removemos o mapeamento de portas externas direto aqui, pois o Nginx vai rotear.
+    expose:
+      - "8080"
+    env_file:
+      - .env
+    networks:
+      - apis-network
+
+  # Exemplo futuro: API 2
+  # mk-api-faturas:
+  #   build: ../mk-api-faturas  # Caminho para a pasta da API 2
+  #   container_name: mk-api-faturas
+  #   restart: unless-stopped
+  #   expose:
+  #     - "8080"
+  #   env_file:
+  #     - ../mk-api-faturas/.env
+  #   networks:
+  #     - apis-network
+
+networks:
+  apis-network:
+    driver: bridge
