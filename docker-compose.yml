@@ -18,14 +18,14 @@ services:
 
   # API 1: Consulta de Documento (A que criamos)
   mk-api-consulta-doc:
-    build: .
+    build: ./api-consulta
     container_name: mk-api-consulta-doc
     restart: unless-stopped
     # Removemos o mapeamento de portas externas direto aqui, pois o Nginx vai rotear.
     expose:
       - "8080"
     env_file:
-      - .env
+      - ./api-consulta/.env
     networks:
       - apis-network
 
